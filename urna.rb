@@ -1,3 +1,16 @@
+# no windows onde tem "clear" tem que ser substituido por "cls" para limpar a tela
+# ou podemos priar a função para limpar a tela e chama-la no codigo:
+
+#def limpar_tela
+  #if Gem.win_platform?
+    #system("cls")
+  #else
+    #system("clear")
+  #end
+#end
+
+# e subistituir 'system "clear"' por limpar_tela
+
 candX = 0
 candY = 0
 candZ = 0
