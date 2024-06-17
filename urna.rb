@@ -1,29 +1,21 @@
-# no windows onde tem "clear" tem que ser substituido por "cls" para limpar a tela
-# ou podemos priar a função para limpar a tela e chama-la no codigo:
-
-#def limpar_tela
-  #if Gem.win_platform?
-    #system("cls")
-  #else
-    #system("clear")
-  #end
-#end
-
-# e subistituir 'system "clear"' por limpar_tela
+require 'csv'
 
 candX = 0
 candY = 0
 candZ = 0
 brancos = 0
 nulos = 0
-vitorioso = ""
 
-def total_votos(candX, candY, candZ, brancos, nulos)
-  candX + candY + candZ + brancos + nulos
-end
+puts 'Bem Vindo ao sistema de Urna Eletronica do grupo 5 da Softex'
 
-loop do
-  system "clear"
+print "Digite a quantidade de eleitores para essa votação: "
+voter_number = gets.chomp.to_i
+
+# Inicializa o contador de votantes
+voter_count = 0
+
+# Loop principal para cada eleitor
+while voter_count < voter_number
   puts "******* Menu: *******"
   puts "====================="
   puts "1 - Votar."
@@ -33,49 +25,32 @@ loop do
 
   case escolha
   when 1
-    candidato_confirmado = false
+    loop do
+      puts "Escolha o(a) seu(sua) candidato(a): \n 89 - Pedro \n 47 - José \n 51 - Maria \n 0 - Branco"
 
-    until candidato_confirmado
-      candidato = ""  
-      voto = nil
+      print "Digite o número do(a) candidato(a): "
+      voto = gets.chomp
 
-      loop do
-        system "clear"
-        puts "Escolha o(a) seu(sua) candidato(a): \n 89 - Pedro \n 47 - José \n 51 - Maria \n 0 - Branco"
+      if voto.match?(/\A\d+\z/) # Verifica se o input é um número
+        voto = voto.to_i
 
-        print "Digite o número do(a) candidato(a): "
-        voto = gets.chomp
-
-        if voto.match?(/\A\d+\z/)
-          voto = voto.to_i
-
-          case voto
-          when 89
-            candidato = 'Candidato(a) Pedro'
-          when 47
-            candidato = 'Candidato(a) José'
-          when 51
-            candidato = 'Candidata Maria'
-          when 0
-            candidato = 'Branco'
-          else
-            candidato = 'Nulo'
-          end
-
-          break
+        case voto
+        when 89
+          candidato = 'Candidato(a) Pedro'
+        when 47
+          candidato = 'Candidato(a) José'
+        when 51
+          candidato = 'Candidata Maria'
+        when 0
+          candidato = 'Branco'
         else
-          puts "Entrada inválida. Por favor, digite apenas números."
-          sleep(2)
+          candidato = 'Nulo'
         end
-      end
 
-      loop do
-        system "clear"
         puts "Confirma voto para #{candidato}? (S/N)"
         confirmacao = gets.chomp.upcase
 
-        case confirmacao
-        when 'S'
+        if confirmacao == 'S'
           if voto == 89
             candX += 1
           elsif voto == 47
@@ -87,17 +62,18 @@ loop do
           else
             nulos += 1
           end
-
-          candidato_confirmado = true
           break
-        when 'N'
-          break 
         else
           puts "Opção inválida. Digite S para confirmar ou N para corrigir o voto."
           sleep(2)
         end
+      else
+        puts "Entrada inválida. Por favor, digite apenas números."
+        sleep(2)
       end
+
     end
+
 
   when 2
     break
@@ -107,8 +83,7 @@ loop do
   end
 end
 
-system "clear"
-
+# Determina o vencedor
 if candX > candY && candX > candZ
   vitorioso = 'Candidato(a) Pedro'
 elsif candY > candX && candY > candZ
@@ -119,12 +94,37 @@ else
   vitorioso = 'Aconteceu um Empate'
 end
 
-puts "O ganhador desta eleição é:\n\n *****  #{vitorioso}  *****\n"
-puts "\n#{total_votos(candX, candY, candZ, brancos, nulos)} votos totalizados, sendo:
-\n\n Candidato(a) Pedro: #{candX} votos.
- Candidato(a) José: #{candY} votos.
- Candidata Maria: #{candZ} votos.
- Brancos e nulos: #{brancos + nulos} votos.
- Sendo:
-  Brancos: #{brancos}
-  Nulos: #{nulos}"
+# Exibe os resultados
+total_votos = candX + candY + candZ + brancos + nulos
+puts "O ganhador desta eleição é:\n\n ***** #{vitorioso} *****\n"
+puts "\n#{total_votos} votos totalizados, sendo:"
+puts "\n Candidato(a) Pedro: #{candX} votos."
+puts " Candidato(a) José: #{candY} votos."
+puts " Candidata Maria: #{candZ} votos."
+puts " Brancos e nulos: #{brancos + nulos} votos.\n Sendo:"
+puts " Brancos: #{brancos}"
+puts " Nulos: #{nulos}"
+
+# Verifica se o arquivo já existe e trata de acordo
+arquivo_existente = "resultados_votacao.csv"
+if File.exist?(arquivo_existente)
+  puts "O arquivo 'resultados_votacao.csv' já existe. Deseja sobrescrever? (S/N)"
+  resposta = gets.chomp.upcase
+  if resposta == 'N'
+    puts "Digite um novo nome para o arquivo (sem extensão):"
+    novo_nome = gets.chomp
+    arquivo_existente = "#{novo_nome}.csv"
+  end
+end
+
+# Cria o arquivo CSV com os resultados da votação
+CSV.open(arquivo_existente, "w") do |csv|
+  csv << ["Candidato", "Votos"]
+  csv << ["Pedro", candX]
+  csv << ["José", candY]
+  csv << ["Maria", candZ]
+  csv << ["Brancos", brancos]
+  csv << ["Nulos", nulos]
+end
+
+puts "Os resultados foram salvos no arquivo '#{arquivo_existente}'."
