@@ -8,6 +8,7 @@ nulos = 0
 
 clear_command = Gem.win_platform? ? 'cls' : 'clear'
 
+system(clear_command)
 puts 'Bem Vindo ao sistema de Urna Eletronica do grupo 5 da Softex'
 
 print "Digite a quantidade de eleitores para essa votação: "
@@ -110,12 +111,11 @@ puts " Brancos e nulos: #{brancos + nulos} votos.\n Sendo:"
 puts " Brancos: #{brancos}"
 puts " Nulos: #{nulos}"
 
-system(clear_command)
 
 # Verifica se o arquivo já existe e trata de acordo
 arquivo_existente = "resultados_votacao.csv"
 if File.exist?(arquivo_existente)
-  puts "O arquivo 'resultados_votacao.csv' já existe. Deseja sobrescrever? (S/N)"
+  puts "\nO arquivo 'resultados_votacao.csv' já existe. Deseja sobrescrever? (S/N)"
   resposta = gets.chomp.upcase
   if resposta == 'N'
     puts "Digite um novo nome para o arquivo (sem extensão):"
@@ -134,5 +134,4 @@ CSV.open(arquivo_existente, "w") do |csv|
   csv << ["Nulos", nulos]
 end
 
-system(clear_command)
 puts "Os resultados foram salvos no arquivo '#{arquivo_existente}'."
