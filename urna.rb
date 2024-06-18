@@ -6,16 +6,16 @@ candZ = 0
 brancos = 0
 nulos = 0
 
+clear_command = Gem.win_platform? ? 'cls' : 'clear'
+
 puts 'Bem Vindo ao sistema de Urna Eletronica do grupo 5 da Softex'
 
 print "Digite a quantidade de eleitores para essa votação: "
 voter_number = gets.chomp.to_i
 
-# Inicializa o contador de votantes
-voter_count = 0
-
 # Loop principal para cada eleitor
-while voter_count < voter_number
+for voter_count in 1..voter_number
+  system(clear_command)
   puts "******* Menu: *******"
   puts "====================="
   puts "1 - Votar."
@@ -25,6 +25,7 @@ while voter_count < voter_number
 
   case escolha
   when 1
+    system(clear_command)
     loop do
       puts "Escolha o(a) seu(sua) candidato(a): \n 89 - Pedro \n 47 - José \n 51 - Maria \n 0 - Branco"
 
@@ -47,6 +48,8 @@ while voter_count < voter_number
           candidato = 'Nulo'
         end
 
+        system(clear_command)
+
         puts "Confirma voto para #{candidato}? (S/N)"
         confirmacao = gets.chomp.upcase
 
@@ -64,6 +67,7 @@ while voter_count < voter_number
           end
           break
         else
+          system(clear_command)
           puts "Opção inválida. Digite S para confirmar ou N para corrigir o voto."
           sleep(2)
         end
@@ -71,13 +75,12 @@ while voter_count < voter_number
         puts "Entrada inválida. Por favor, digite apenas números."
         sleep(2)
       end
-
     end
-
 
   when 2
     break
   else
+    system(clear_command)
     puts "Opção inválida. Escolha 1 para votar ou 2 para encerrar a votação."
     sleep(2)
   end
@@ -94,6 +97,8 @@ else
   vitorioso = 'Aconteceu um Empate'
 end
 
+system(clear_command)
+
 # Exibe os resultados
 total_votos = candX + candY + candZ + brancos + nulos
 puts "O ganhador desta eleição é:\n\n ***** #{vitorioso} *****\n"
@@ -104,6 +109,8 @@ puts " Candidata Maria: #{candZ} votos."
 puts " Brancos e nulos: #{brancos + nulos} votos.\n Sendo:"
 puts " Brancos: #{brancos}"
 puts " Nulos: #{nulos}"
+
+system(clear_command)
 
 # Verifica se o arquivo já existe e trata de acordo
 arquivo_existente = "resultados_votacao.csv"
@@ -127,4 +134,5 @@ CSV.open(arquivo_existente, "w") do |csv|
   csv << ["Nulos", nulos]
 end
 
+system(clear_command)
 puts "Os resultados foram salvos no arquivo '#{arquivo_existente}'."
