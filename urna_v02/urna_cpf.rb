@@ -3,7 +3,7 @@ require 'csv'
 def start_urna
     loop do
         clear_screen
-        display_menu
+        display_menu # melhorar o nome das variaveis, colocar um nome que seja mais correto com o que é feito, adicionar n˘ da linha
 
         option = gets.chomp.to_i
 
@@ -139,6 +139,8 @@ def display_results
         puts "#{candidate}: #{votes} votos"
     end
     puts "Total de votos: #{$total_votes}"
+    #adicionar aqui quem foi mais votado e quem foi menos votado
+    # Adicionar aqui quem foi o vencedor.
 end
 
 def save_results
