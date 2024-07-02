@@ -13,15 +13,22 @@ class UrnaEletronica
       "1" => "Branco",
       "0" => "Nulo"
     }
+    @votos = Hash.new(0)
   end
 
   def votar(cpf, candidato)
+    unless ValidacaoCpf.validar(cpf)
+      puts "CPF inválido."
+      return false
+    end
+
     if @eleitores.include?(cpf)
       puts "Este CPF já votou."
       return false
     elsif @candidatos.key?(candidato)
-      salvar_voto(cpf, candidato)
-      @eleitores << cpf unless candidato == "0"
+      salvar_voto(cpf)
+      registrar_voto(candidato)
+      @eleitores << cpf  # Adiciona CPF à lista de eleitores.
       puts "Voto registrado para #{@candidatos[candidato]}."
       return true
     else
@@ -34,21 +41,19 @@ class UrnaEletronica
     @candidatos.each { |numero, nome| puts "#{numero}: #{nome}" }
   end
 
-  def salvar_voto(cpf, candidato)
-    CSV.open("votos.csv", "a") do |csv|
-      csv << [cpf, @candidatos[candidato]]
+  #salva o cpf do eleito para garantir que nao haverà duplicidade
+  def salvar_voto(cpf)
+    CSV.open("urna_grupo_Kennedy/urna_eletronica/votos.csv", "a") do |csv|
+      csv << [cpf]
     end
   end
 
+  def registrar_voto(candidato)
+    @votos[@candidatos[candidato]] += 1
+  end
+
   def calcular_resultados
-    resultados = Hash.new(0)
-
-    CSV.foreach("votos.csv", headers: false) do |row|
-      voto = row[1]
-      resultados[voto] += 1
-    end
-
-    resultados
+    @votos
   end
 
   def mostrar_resultados
@@ -59,6 +64,7 @@ class UrnaEletronica
       puts "#{candidato}: #{votos} voto(s)"
     end
 
+    # mostra o ranking dos candidatos
     vencedor, votos_vencedor = resultados.max_by { |_, votos| votos }
     perdedor, votos_perdedor = resultados.min_by { |_, votos| votos }
 
@@ -69,12 +75,11 @@ class UrnaEletronica
   def salvar_resultados
     resultados = calcular_resultados
 
-    CSV.open("resultados.csv", "w") do |csv|
+    CSV.open("urna_grupo_Kennedy/urna_eletronica/resultados.csv", "w") do |csv|
       csv << ["Candidato", "Votos"]
       resultados.each do |candidato, votos|
         csv << [candidato, votos]
       end
     end
   end
-
 end
